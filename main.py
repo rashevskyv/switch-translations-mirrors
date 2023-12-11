@@ -59,7 +59,7 @@ def unzip_assets(target_folder):
             parts = item.replace('.zip', '').split('_')
             folder_name = parts[1] + "_" + parts[2]
             if len(parts) >= 3:
-                new_folder_name = parts[1]  # Використовуємо першу частину як нову назву папки
+                new_folder_name = parts[1].capitalize()  # Використовуємо першу частину як нову назву папки
                 original_folder_path = os.path.join(target_folder, folder_name)
                 new_folder_path = os.path.join(target_folder, new_folder_name)
                 if os.path.exists(original_folder_path):
@@ -74,16 +74,14 @@ def repackage_translations(translation_folder):
                 region_path = os.path.join(language_path, region)
                 if os.path.isdir(region_path):
                     # Видаляємо префікс "replaces_" для імені архіву
-                    archive_name = region.replace('replaces_', '') + '.zip'
-                    zip_file_path = os.path.join(language_path, archive_name)
+                    archive_name = region.replace('replaces_', '')
+                    archive_file_path = os.path.join(language_path, archive_name)
 
-                    with zipfile.ZipFile(zip_file_path, 'w') as zipf:
-                        for root, dirs, files in os.walk(region_path):
-                            for file in files:
-                                file_path = os.path.join(root, file)
-                                zipf.write(file_path, os.path.relpath(file_path, region_path))
-                        print(f"Архів '{archive_name}' створено у папці '{language}'.")
+                    # Створюємо архів із вмістом папки
+                    shutil.make_archive(archive_file_path, 'zip', region_path)
+                    print(f"Архів '{archive_name}.zip' створено у папці '{language}'.")
 
+                    # Видаляємо оригінальну папку
                     shutil.rmtree(region_path)
                     print(f"Папка '{region}' видалена.")
                     
@@ -112,6 +110,36 @@ def get_latest_commit_date(user, repo):
     else:
         print("Немає доступних комітів.")
         return None
+    
+def create_config(translations_path, template_file_path):
+    """
+    Creates a config.ini file based on the template file and directories inside the translations folder.
+    :param translations_path: Path to the translations folder containing language directories.
+    :param template_file_path: Path to the template file (config_template.ini).
+    """
+    
+
+    try:
+        # Read the template content
+        with open(template_file_path, 'r', encoding='utf-8') as file:
+            template = file.read()
+
+        # List the directories in the given path
+        language_dirs = [d for d in os.listdir(translations_path) if os.path.isdir(os.path.join(translations_path, d))]
+        config_content = ""
+
+        # Generate config sections for each language directory
+        for lang in language_dirs:
+            config_content += template.replace('{%language_name%}', lang).replace('{%lang%}', lang)
+            config_content += "\n\n"
+
+        # Save the config_content to a file in translations_path
+        with open(os.path.join(translations_path, 'config.ini'), 'w', encoding='utf-8') as file:
+            file.write(config_content)
+
+        print("config.ini file created successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
 
 def main():
 	user = 'NX-Family'
@@ -120,20 +148,23 @@ def main():
 	target_folder = os.path.join(current_dir, 'translations')
 
 	release_data = get_latest_release(user, repo)
-	download_assets(release_data, target_folder)
-	unzip_assets(target_folder)
+	# download_assets(release_data, target_folder)
+	# unzip_assets(target_folder)
     
 	translation_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'translations')
-	repackage_translations(translation_folder)
+	# repackage_translations(translation_folder)
     
 	timestamp_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'last_run_timestamp.txt')
-	save_last_run_timestamp(timestamp_file_path)
+	# save_last_run_timestamp(timestamp_file_path)
     
 	commit_user = 'rashevskyv'  # замініть на потрібного користувача
 	commit_repo = 'switch-translations-mirrors'  # замініть на потрібний репозиторій
 
 	release_date = get_latest_release_date(user, repo)
 	commit_date = get_latest_commit_date(commit_user, commit_repo)
+     
+	translations_path = target_folder
+	create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
     
 	if release_date and commit_date:
 		if commit_date < release_date:
