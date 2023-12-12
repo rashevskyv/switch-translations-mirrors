@@ -3,9 +3,9 @@
         "lang": "`Choose what language will be replaced"
     },
     {
-        "file-name": "de-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/de-EU.zip",
-        "lang": "German for Europe region"
+        "file-name": "es-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/es-EU.zip",
+        "lang": "Spanish for Europe region"
     },
     {
         "file-name": "en-EU.zip",
@@ -18,14 +18,9 @@
         "lang": "English for America region"
     },
     {
-        "file-name": "es-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/es-EU.zip",
-        "lang": "Spanish for Europe region"
-    },
-    {
-        "file-name": "es-US.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/es-US.zip",
-        "lang": "Spanish for America region"
+        "file-name": "de-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/de-EU.zip",
+        "lang": "German for Europe region"
     },
     {
         "file-name": "fr-EU.zip",
@@ -36,5 +31,10 @@
         "file-name": "it-EU.zip",
         "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/it-EU.zip",
         "lang": "Italian for Europe region"
+    },
+    {
+        "file-name": "es-US.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/es-US.zip",
+        "lang": "Spanish for America region"
     }
 ]

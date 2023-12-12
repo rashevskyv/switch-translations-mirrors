@@ -3,6 +3,11 @@
         "lang": "`Choose what language will be replaced"
     },
     {
+        "file-name": "es-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Catalan/es-EU.zip",
+        "lang": "Spanish for Europe region"
+    },
+    {
         "file-name": "en-EU.zip",
         "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Catalan/en-EU.zip",
         "lang": "English for Europe region"
@@ -11,11 +16,6 @@
         "file-name": "en-US.zip",
         "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Catalan/en-US.zip",
         "lang": "English for America region"
-    },
-    {
-        "file-name": "es-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Catalan/es-EU.zip",
-        "lang": "Spanish for Europe region"
     },
     {
         "file-name": "es-US.zip",
