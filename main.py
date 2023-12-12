@@ -4,6 +4,7 @@ import shutil
 import zipfile
 import time
 from datetime import datetime
+import json
 
 def get_latest_release(user, repo):
     url = f"https://api.github.com/repos/{user}/{repo}/releases/latest"
@@ -140,6 +141,86 @@ def create_config(translations_path, template_file_path):
         print("config.ini file created successfully.")
     except Exception as e:
         print(f"Error: {e}")
+        
+def create_json_in_folders(base_path):
+    print("Початок виконання функції...")
+
+    # Шлях до основної папки з перекладами
+    translations_path = os.path.join(base_path, 'translations')
+    print(f"Перевіряємо шлях: {translations_path}")
+
+    # Перевіряємо наявність папки перекладів
+    if not os.path.exists(translations_path):
+        print("Папка перекладів не знайдена.")
+        return
+    else:
+        print("Папка перекладів знайдена.")
+
+    # Перевіряємо та створюємо папку langs
+    langs_path = os.path.join(translations_path, 'langs')
+    if not os.path.exists(langs_path):
+        print(f"Створюємо папку: {langs_path}")
+        os.makedirs(langs_path)
+    else:
+        print(f"Папка вже існує: {langs_path}")
+
+    # Ітерація по всіх папках мов
+    for lang_folder in os.listdir(translations_path):
+        lang_folder_path = os.path.join(translations_path, lang_folder)
+        print(f"Обробляємо папку мови: {lang_folder_path}")
+
+        # Перевіряємо, чи це дійсно папка і вона не є папкою 'langs'
+        if os.path.isdir(lang_folder_path) and lang_folder != 'langs':
+            print(f"Створюємо JSON для мови: {lang_folder}")
+            json_data = {'lang': lang_folder}
+            file_index = 1
+
+            # Ітерація по всіх файлах в папці мови
+            for file in os.listdir(lang_folder_path):
+                if file.endswith('.zip'):
+                    file_url = f"https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/{lang_folder}/{file}"
+                    json_data[f'file-url-{file_index}'] = file_url
+                    json_data[f'file-name-{file_index}'] = file
+                    file_index += 1
+
+            # Записуємо дані в JSON файл
+            with open(os.path.join(langs_path, f'{lang_folder}.json'), 'w') as json_file:
+                json.dump(json_data, json_file, indent=4)
+            print(f"JSON файл створено: {lang_folder}.json")
+        else:
+            print(f"Пропускаємо папку: {lang_folder_path}")
+
+    print("Завершення виконання функції.")
+    
+def archive_and_move(base_path, current_dir):
+	config_file_path = os.path.join(base_path, 'config.ini')
+	langs_path = os.path.join(base_path, 'langs')
+	archive_name = 'lang_packs.zip'
+    
+	if os.path.exists(archive_name):
+		os.remove(archive_name)
+
+    # Перевірка наявності файлів та папок
+	if not os.path.exists(config_file_path) or not os.path.exists(langs_path):
+		print("config.ini або папка langs не знайдені.")
+		return
+
+    # Ім'я архіву (з розширенням)
+	archive_name = os.path.join(current_dir, 'lang_packs.zip')
+
+    # Створення архіву та додавання папки langs
+	print(f"Створюємо архів {archive_name}")
+	with zipfile.ZipFile(archive_name, 'w', zipfile.ZIP_DEFLATED) as archive:
+		# Додавання папки langs
+		for folder_name, subfolders, filenames in os.walk(langs_path):
+			for filename in filenames:
+					file_path = os.path.join(folder_name, filename)
+					archive.write(file_path, os.path.relpath(file_path, base_path))
+
+		# Додавання config.ini
+		archive.write(config_file_path, os.path.relpath(config_file_path, base_path))
+
+	print(f"Архів {archive_name} створено і розміщено в {current_dir}")
 
 def main():
 	user = 'NX-Family'
@@ -165,6 +246,9 @@ def main():
      
 	translations_path = target_folder
 	create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
+	create_json_in_folders(current_dir)
+
+	archive_and_move(translations_path, current_dir)
     
 	if release_date and commit_date:
 		if commit_date < release_date:
