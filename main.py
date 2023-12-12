@@ -238,40 +238,35 @@ def archive_and_move(base_path, current_dir):
 	print(f"Архів {archive_name} створено і розміщено в {current_dir}")
 
 def main():
-	user = 'NX-Family'
-	repo = 'NX-Translation'
-	current_dir = os.path.dirname(os.path.realpath(__file__))
-	target_folder = os.path.join(current_dir, 'translations')
+    user = 'NX-Family'
+    repo = 'NX-Translation'
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    target_folder = os.path.join(current_dir, 'translations')
+    release_data = get_latest_release(user, repo)
+    translations_path = target_folder
+    commit_user = 'rashevskyv'  # замініть на потрібного користувача
+    commit_repo = 'switch-translations-mirrors'  # замініть на потрібний репозиторій
 
-	release_data = get_latest_release(user, repo)
-	# download_assets(release_data, target_folder)
-	# unzip_assets(target_folder)
-    
-	translation_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'translations')
-	# repackage_translations(translation_folder)
-    
-	# timestamp_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'last_run_timestamp.txt')
-	# save_last_run_timestamp(timestamp_file_path)
-    
-	commit_user = 'rashevskyv'  # замініть на потрібного користувача
-	commit_repo = 'switch-translations-mirrors'  # замініть на потрібний репозиторій
+    release_date = get_latest_release_date(user, repo)
+    commit_date = get_latest_commit_date(commit_user, commit_repo)
+        
+    download_assets(release_data, target_folder)
+    unzip_assets(target_folder)
 
-	release_date = get_latest_release_date(user, repo)
-	commit_date = get_latest_commit_date(commit_user, commit_repo)
-     
-	translations_path = target_folder
-	create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
-	create_json_in_folders(current_dir)
+    repackage_translations(translations_path)
 
-	archive_and_move(translations_path, current_dir)
-    
-	if release_date and commit_date:
-		if commit_date < release_date:
-			print(f"{release_date} > {commit_date}")	
-		else:
-			print(f"{release_date} < {commit_date}")
-	else:
-		print("Не вдалося отримати одну або обидві дати.")
+    create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
+    create_json_in_folders(current_dir)
+
+    archive_and_move(translations_path, current_dir)
+
+    if release_date and commit_date:
+        if commit_date < release_date:
+            print(f"New release was detected on {release_date.strftime('%d.%m.%Y %H:%M:%S')}.")	
+        else:
+            print(f"No new releases detected")
+    else:
+        print("Не вдалося отримати одну або обидві дати.")
 
 if __name__ == "__main__":
     main()
