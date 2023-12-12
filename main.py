@@ -250,19 +250,19 @@ def main():
     release_date = get_latest_release_date(user, repo)
     commit_date = get_latest_commit_date(commit_user, commit_repo)
         
-    download_assets(release_data, target_folder)
-    unzip_assets(target_folder)
-
-    repackage_translations(translations_path)
-
-    create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
-    create_json_in_folders(current_dir)
-
-    archive_and_move(translations_path, current_dir)
 
     if release_date and commit_date:
         if commit_date < release_date:
             print(f"New release was detected on {release_date.strftime('%d.%m.%Y %H:%M:%S')}.")	
+            download_assets(release_data, target_folder)
+            unzip_assets(target_folder)
+
+            repackage_translations(translations_path)
+
+            create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
+            create_json_in_folders(current_dir)
+
+            archive_and_move(translations_path, current_dir)
         else:
             print(f"No new releases detected")
     else:
