@@ -72,6 +72,9 @@ def repackage_translations(translation_folder):
         language_path = os.path.join(translation_folder, language)
         if os.path.isdir(language_path):
             for region in os.listdir(language_path):
+                if region == 'licenses':  # Пропускаємо папку licenses
+                    continue
+
                 region_path = os.path.join(language_path, region)
                 if os.path.isdir(region_path):
                     # Видаляємо префікс "replaces_" для імені архіву
@@ -114,33 +117,36 @@ def get_latest_commit_date(user, repo):
     
 def create_config(translations_path, template_file_path):
     """
-    Creates a config.ini file based on the template file and directories inside the translations folder.
+    Creates a config.ini file based on the updated template file and directories inside the translations folder.
+    This version excludes the 'langs' folder.
     :param translations_path: Path to the translations folder containing language directories.
-    :param template_file_path: Path to the template file (config_template.ini).
+    :param template_file_path: Path to the template file.
     """
-    
-
     try:
         # Read the template content
         with open(template_file_path, 'r', encoding='utf-8') as file:
             template = file.read()
 
-        # List the directories in the given path
-        language_dirs = [d for d in os.listdir(translations_path) if os.path.isdir(os.path.join(translations_path, d))]
-        config_content = ""
+        # List the directories in the given path, excluding 'langs' folder
+        language_dirs = [d for d in os.listdir(translations_path) if os.path.isdir(os.path.join(translations_path, d)) and d != 'langs']
+        
+        # Split the template into two parts: static (first two elements) and dynamic (for each language)
+        static_part, dynamic_part = template.split('[*{%language_name%}]', 1)
+
+        config_content = static_part.strip() + "\n\n"
 
         # Generate config sections for each language directory
         for lang in language_dirs:
-            config_content += template.replace('{%language_name%}', lang).replace('{%lang%}', lang)
-            config_content += "\n\n"
+            config_section = "[*" + lang + "]" + dynamic_part.replace('{%language_name%}', lang).replace('{%lang%}', lang)
+            config_content += config_section.strip() + "\n\n"
 
         # Save the config_content to a file in translations_path
         with open(os.path.join(translations_path, 'config.ini'), 'w', encoding='utf-8') as file:
             file.write(config_content)
 
-        print("config.ini file created successfully.")
+        return "config.ini file created successfully."
     except Exception as e:
-        print(f"Error: {e}")
+        return f"Error: {e}"
         
 def create_json_in_folders(base_path):
     print("Початок виконання функції...")
@@ -161,18 +167,36 @@ def create_json_in_folders(base_path):
     else:
         print(f"Папка вже існує: {langs_path}")
 
+    # Словник для розшифровки лінгвістичних пар
+    lang_decoding = {
+        'de-EU': 'German for Europe region',
+        'en-EU': 'English for Europe region',
+        'en-US': 'English for America region',
+        'es-EU': 'Spanish for Europe region',
+        'es-US': 'Spanish for America region',
+        'fr-EU': 'French for Europe region',
+        'it-EU': 'Italian for Europe region',
+        'ru-EU': 'Russian for Europe region'
+    }
+
     for lang_folder in os.listdir(translations_path):
         lang_folder_path = os.path.join(translations_path, lang_folder)
         print(f"Обробляємо папку мови: {lang_folder_path}")
 
         if os.path.isdir(lang_folder_path) and lang_folder != 'langs':
             print(f"Створюємо JSON для мови: {lang_folder}")
-            json_array = []
+            json_array = [{"lang":"`Choose what language will be replaced"},]
 
             for file in os.listdir(lang_folder_path):
                 if file.endswith('.zip'):
                     file_url = f"https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/{lang_folder}/{file}"
-                    json_array.append({'file-name': file, 'file-url': file_url})
+                    file_name_without_extension = file[:-4]  # Видаляємо розширення .zip
+                    lang_description = lang_decoding.get(file_name_without_extension, file)  # Використовуємо назву файлу, якщо розшифровки немає
+                    json_array.append({
+                        'file-name': file, 
+                        'file-url': file_url,
+                        'lang': lang_description
+                    })
 
             with open(os.path.join(langs_path, f'{lang_folder}.json'), 'w') as json_file:
                 json.dump(json_array, json_file, indent=4)
@@ -181,6 +205,7 @@ def create_json_in_folders(base_path):
             print(f"Пропускаємо папку: {lang_folder_path}")
 
     print("Завершення виконання функції.")
+
     
 def archive_and_move(base_path, current_dir):
 	config_file_path = os.path.join(base_path, 'config.ini')
@@ -225,7 +250,7 @@ def main():
 	translation_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'translations')
 	# repackage_translations(translation_folder)
     
-	timestamp_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'last_run_timestamp.txt')
+	# timestamp_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'last_run_timestamp.txt')
 	# save_last_run_timestamp(timestamp_file_path)
     
 	commit_user = 'rashevskyv'  # замініть на потрібного користувача
