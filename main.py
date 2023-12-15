@@ -56,10 +56,16 @@ def unzip_assets(target_folder):
             print(f"Файл '{item}' успішно розпаковано.")
             os.remove(file_path)  # Видалити архів після розпакування
 
+def rename_folders(target_folder):
+    for item in os.listdir(target_folder):
+        if not item.endswith('.ini'):
+            print(f"Item: {item}")
             # Отримуємо назву папки з назви архіву
-            parts = item.replace('.zip', '').split('_')
-            folder_name = parts[1] + "_" + parts[2]
-            if len(parts) >= 3:
+            parts = item.split('_')
+            print(f"Parts: {parts}")
+            folder_name = item
+            print(f"Folder name: {folder_name}")
+            if len(parts) >= 2:
                 new_folder_name = parts[1].capitalize()  # Використовуємо першу частину як нову назву папки
                 original_folder_path = os.path.join(target_folder, folder_name)
                 new_folder_path = os.path.join(target_folder, new_folder_name)
@@ -236,6 +242,41 @@ def archive_and_move(base_path, current_dir):
 		archive.write(config_file_path, os.path.relpath(config_file_path, base_path))
 
 	print(f"Архів {archive_name} створено і розміщено в {current_dir}")
+     
+def sort_starred_sections(file_content):
+    lines = file_content.split('\n')
+    sections = {}
+    starred_sections = {}
+    current_section = None
+    section_count = 0
+
+    for line in lines:
+        if line.startswith('[') and line.endswith(']'):
+            current_section = line[1:-1]
+            section_count += 1
+            if '*' in current_section and section_count > 2:
+                starred_sections[current_section] = []
+            else:
+                sections[current_section] = []
+        elif current_section is not None:
+            if current_section in starred_sections:
+                starred_sections[current_section].append(line)
+            else:
+                sections[current_section].append(line)
+
+    sorted_starred_sections = {k: v for k, v in sorted(starred_sections.items())}
+
+    sorted_content = []
+    for section, lines in sections.items():
+        sorted_content.append(f'[{section}]')
+        sorted_content.extend(lines)
+        sorted_content.append('')
+    for section, lines in sorted_starred_sections.items():
+        sorted_content.append(f'[{section}]')
+        sorted_content.extend(lines)
+        sorted_content.append('')
+
+    return '\n'.join(sorted_content)
 
 def main():
     user = 'NX-Family'
@@ -249,19 +290,33 @@ def main():
 
     release_date = get_latest_release_date(user, repo)
     commit_date = get_latest_commit_date(commit_user, commit_repo)
+
         
+    # download_assets(release_data, target_folder)
+    # unzip_assets(target_folder)
+    # rename_folders(target_folder)
+
+    # repackage_translations(translations_path)
+
+    # create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
+    # create_json_in_folders(current_dir)
+
+    # sort_starred_sections(os.path.join(translations_path, 'config.ini'))
+    # archive_and_move(translations_path, current_dir)
 
     if release_date and commit_date:
         if commit_date < release_date:
             print(f"New release was detected on {release_date.strftime('%d.%m.%Y %H:%M:%S')}.")	
             download_assets(release_data, target_folder)
             unzip_assets(target_folder)
+            rename_folders(target_folder)
 
             repackage_translations(translations_path)
 
             create_config(translations_path, os.path.join(current_dir, 'config_template.ini'))
             create_json_in_folders(current_dir)
 
+            sort_starred_sections(os.path.join(translations_path, 'config.ini'))
             archive_and_move(translations_path, current_dir)
         else:
             print(f"No new releases detected")
