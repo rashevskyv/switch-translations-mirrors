@@ -1,4 +1,7 @@
 ========================================
+      NX-Translation Version: 1.13
+       Supported Firmware: 17.0.1
+========================================
 CUSTOM FIRMWARE TRANSLATION INSTALLATION
 
           downloaded from
