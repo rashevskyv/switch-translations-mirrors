@@ -8,13 +8,13 @@
         "lang": "English for Europe region"
     },
     {
-        "file-name": "en-US.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Ukrainian/en-US.zip",
-        "lang": "English for America region"
-    },
-    {
         "file-name": "ru-EU.zip",
         "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Ukrainian/ru-EU.zip",
         "lang": "Russian for Europe region"
+    },
+    {
+        "file-name": "en-US.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Ukrainian/en-US.zip",
+        "lang": "English for America region"
     }
 ]
