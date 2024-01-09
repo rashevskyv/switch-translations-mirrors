@@ -1,0 +1,20 @@
+[
+    {
+        "lang": "`Choose what language will be replaced"
+    },
+    {
+        "file-name": "en-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Latvian/en-EU.zip",
+        "lang": "English for Europe region"
+    },
+    {
+        "file-name": "ru-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Latvian/ru-EU.zip",
+        "lang": "Russian for Europe region"
+    },
+    {
+        "file-name": "en-US.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Latvian/en-US.zip",
+        "lang": "English for America region"
+    }
+]

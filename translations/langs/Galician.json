@@ -1,0 +1,35 @@
+[
+    {
+        "lang": "`Choose what language will be replaced"
+    },
+    {
+        "file-name": "es-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Galician/es-EU.zip",
+        "lang": "Spanish for Europe region"
+    },
+    {
+        "file-name": "en-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Galician/en-EU.zip",
+        "lang": "English for Europe region"
+    },
+    {
+        "file-name": "es-US.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Galician/es-US.zip",
+        "lang": "Spanish for America region"
+    },
+    {
+        "file-name": "pt-EU.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Galician/pt-EU.zip",
+        "lang": "pt-EU.zip"
+    },
+    {
+        "file-name": "pt-US.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Galician/pt-US.zip",
+        "lang": "pt-US.zip"
+    },
+    {
+        "file-name": "en-US.zip",
+        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Galician/en-US.zip",
+        "lang": "English for America region"
+    }
+]
