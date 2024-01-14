@@ -3,18 +3,15 @@
         "lang": "`Choose what language will be replaced"
     },
     {
-        "file-name": "fr-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Arabic/fr-EU.zip",
-        "lang": "French for Europe region"
+        "lang": "English for America region",
+        "dir": "replaces_en-US"
     },
     {
-        "file-name": "en-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Arabic/en-EU.zip",
-        "lang": "English for Europe region"
+        "lang": "English for Europe region",
+        "dir": "replaces_en-EU"
     },
     {
-        "file-name": "en-US.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Arabic/en-US.zip",
-        "lang": "English for America region"
+        "lang": "French for Europe region",
+        "dir": "replaces_fr-EU"
     }
 ]

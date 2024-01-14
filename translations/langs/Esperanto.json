@@ -3,38 +3,31 @@
         "lang": "`Choose what language will be replaced"
     },
     {
-        "file-name": "fr-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/fr-EU.zip",
-        "lang": "French for Europe region"
+        "lang": "English for America region",
+        "dir": "replaces_en-US"
     },
     {
-        "file-name": "es-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/es-EU.zip",
-        "lang": "Spanish for Europe region"
+        "lang": "English for Europe region",
+        "dir": "replaces_en-EU"
     },
     {
-        "file-name": "en-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/en-EU.zip",
-        "lang": "English for Europe region"
+        "lang": "Spanish for Europe region",
+        "dir": "replaces_es-EU"
     },
     {
-        "file-name": "de-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/de-EU.zip",
-        "lang": "German for Europe region"
+        "lang": "Spanish for America region",
+        "dir": "replaces_es-US"
     },
     {
-        "file-name": "es-US.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/es-US.zip",
-        "lang": "Spanish for America region"
+        "lang": "French for Europe region",
+        "dir": "replaces_fr-EU"
     },
     {
-        "file-name": "en-US.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/en-US.zip",
-        "lang": "English for America region"
+        "lang": "Italian for Europe region",
+        "dir": "replaces_it-EU"
     },
     {
-        "file-name": "it-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Esperanto/it-EU.zip",
-        "lang": "Italian for Europe region"
+        "lang": "German for Europe region",
+        "dir": "replaces_de-EU"
     }
 ]

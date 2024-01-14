@@ -3,18 +3,15 @@
         "lang": "`Choose what language will be replaced"
     },
     {
-        "file-name": "en-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Lithuanian/en-EU.zip",
-        "lang": "English for Europe region"
+        "lang": "English for America region",
+        "dir": "replaces_en-US"
     },
     {
-        "file-name": "ru-EU.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Lithuanian/ru-EU.zip",
-        "lang": "Russian for Europe region"
+        "lang": "English for Europe region",
+        "dir": "replaces_en-EU"
     },
     {
-        "file-name": "en-US.zip",
-        "file-url": "https://github.com/rashevskyv/switch-translations-mirrors/raw/main/translations/Lithuanian/en-US.zip",
-        "lang": "English for America region"
+        "lang": "Russian for Europe region",
+        "dir": "replaces_ru-EU"
     }
 ]
