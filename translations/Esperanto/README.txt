@@ -1,5 +1,5 @@
 ========================================
-      NX-Translation Version: 1.15
+      NX-Translation Version: 1.16
        Supported Firmware: 17.0.1
 ========================================
 CUSTOM FIRMWARE TRANSLATION INSTALLATION
