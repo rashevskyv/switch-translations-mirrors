@@ -2,7 +2,7 @@ name: Run main.py and commit changes
 
 on:
   schedule:
-    - cron:  '0 */4 * * *'
+    - cron:  '0 3 * * *'
   workflow_dispatch: # Дозволити ручний запуск
 
 jobs:
