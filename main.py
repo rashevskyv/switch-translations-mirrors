@@ -45,37 +45,33 @@ def get_latest_commit_date(user, repo):
         print("Немає доступних комітів.")
         return None
     
-def archive_and_move(base_path, current_dir):
-	config_file_path = os.path.join(base_path, 'config.ini')
-	langs_path = os.path.join(base_path, 'langs')
-	archive_name = 'lang_packs.zip'
+def archive_and_move(translations_path, current_dir):
+    archive_name = 'lang_packs.zip'
     
-	if os.path.exists(archive_name):
-		os.remove(archive_name)
+    if os.path.exists(archive_name):
+        os.remove(archive_name)
 
-    # Перевірка наявності файлів та папок
-	if not os.path.exists(config_file_path) or not os.path.exists(langs_path):
-		print("config.ini або папка langs не знайдені.")
-		return
+    # Check if translations folder exists
+    if not os.path.exists(translations_path):
+        print(f"Translations folder not found: {translations_path}")
+        return
 
-    # Ім'я архіву (з розширенням)
-	archive_name = os.path.join(current_dir, 'lang_packs.zip')
+    # Archive name (with extension)
+    archive_name = os.path.join(current_dir, 'lang_packs.zip')
 
-    # Створення архіву та додавання папки langs
-	print(f"Створюємо архів {archive_name}")
-	with zipfile.ZipFile(archive_name, 'w', zipfile.ZIP_DEFLATED) as archive:
-		# Додавання папки langs
-		for folder_name, subfolders, filenames in os.walk(langs_path):
-			for filename in filenames:
-					file_path = os.path.join(folder_name, filename)
-					archive.write(file_path, os.path.relpath(file_path, base_path))
+    # Create archive and add translations folder
+    print(f"Creating archive {archive_name}")
+    with zipfile.ZipFile(archive_name, 'w', zipfile.ZIP_DEFLATED) as archive:
+        # Add all files from translations folder
+        for folder_name, subfolders, filenames in os.walk(translations_path):
+            for filename in filenames:
+                file_path = os.path.join(folder_name, filename)
+                archive_path = os.path.relpath(file_path, translations_path)
+                archive.write(file_path, archive_path)
 
-		# Додавання config.ini
-		archive.write(config_file_path, os.path.relpath(config_file_path, base_path))
+    print(f"Archive {archive_name} created and placed in {current_dir}")
 
-	print(f"Архів {archive_name} створено і розміщено в {current_dir}")
-     
-def create_config_from_json(api_data, template_path, config):
+def create_config_from_json(api_data, template_path, translations_path):
     print("Reading template file...")
     with open(template_path, 'r') as file:
         template = file.read()
@@ -86,42 +82,20 @@ def create_config_from_json(api_data, template_path, config):
     print("Sorting languages...")
     languages_sorted = sorted(languages, key=lambda x: x['id'])
 
-    print("Initializing config content...")
-    config_content = template.split("[*{%name%}]")[0]
+    print("Initializing configuration content...")
+    config_parts = template.split(';LANGUAGES')
+    config_content = config_parts[0].split(';CONFIG')[1].strip()
 
-    for lang in languages_sorted:
-        print(f"Processing language: {lang['name']}")
-        language_section = template.split("[*{%name%}]")[1]
-        language_section = language_section.replace("{%name%}", lang['name'])
-        language_section = language_section.replace("{%url%}", lang['download_url'])
-        language_section = language_section.replace("{%id%}", lang['id'])
+    # Ensure the translations directory exists
+    os.makedirs(translations_path, exist_ok=True)
 
-        config_content += "\n\n[*{0}]\n".format(lang['name']) + language_section
-
-    config_ini_path = config
-
-    # Перевірка та створення директорії, якщо потрібно
-    config_dir = os.path.dirname(config_ini_path)
-    if not os.path.exists(config_dir):
-        print(f"Creating directory: {config_dir}")
-        os.makedirs(config_dir)
-
-    print("Saving config file...")
-    with open(config_ini_path, 'w') as file:
+    # Creating general config.ini
+    general_config_path = os.path.join(translations_path, 'config.ini')
+    with open(general_config_path, 'w') as file:
         file.write(config_content)
-    print("Config file created successfully at:", config_ini_path)
+    print(f"General config.ini created: {general_config_path}")
 
-def create_language_jsons(api_data, base_path):
-    translations_path = os.path.join(base_path, 'translations')
-
-    langs_path = os.path.join(translations_path, 'langs')
-    
-    # Створення папки для мов, якщо вона не існує
-    if not os.path.exists(langs_path):
-        print(f"Створюємо папку для мов: {langs_path}")
-        os.makedirs(langs_path)
-    else:
-        print(f"Папка для мов вже існує: {langs_path}")
+    lang_template = config_parts[1].strip()
 
     lang_decoding = {
         'replaces_CN-zh': 'Chinese for China region',
@@ -142,27 +116,30 @@ def create_language_jsons(api_data, base_path):
         'replaces_US-pt': 'Portuguese for America region'
     }
 
-    print("Обробка даних мов...")
-    for lang in api_data['languages']:
-        json_structure = [{"lang": "`Choose what language will be replaced"}]
+    for lang in languages_sorted:
+        print(f"Processing language: {lang['name']}")
+        lang_folder = os.path.join(translations_path, lang['name'])
+        os.makedirs(lang_folder, exist_ok=True)
+
+        lang_config = "-- Choose what language will be replaced\n\n"
 
         for replace in lang['replaces']:
             decoding_key = f"replaces_{replace['region']['id']}-{replace['locale']['id']}"
             decoded_lang = lang_decoding.get(decoding_key, "")
-            json_structure.append({
-                "lang": decoded_lang,
-                "dir": replace['path']
-            })
+            
+            section_config = lang_template.replace("{%lang%}", decoded_lang)
+            section_config = section_config.replace("{%download_url%}", lang['download_url'])
+            section_config = section_config.replace("{%id%}", lang['id'])
+            section_config = section_config.replace("{%path%}", replace['path'])
+            
+            lang_config += section_config + "\n"
 
-        json_filename = f"{lang['name']}.json"
-        json_file_path = os.path.join(langs_path, json_filename)
+        lang_config_path = os.path.join(lang_folder, 'config.ini')
+        with open(lang_config_path, 'w') as file:
+            file.write(lang_config)
+        print(f"Config.ini for {lang['name']} created: {lang_config_path}")
 
-        # Запис у JSON файл
-        with open(json_file_path, 'w') as json_file:
-            json.dump(json_structure, json_file, indent=4)
-            print(f"JSON файл створено: {json_filename}")
-
-    print("Створення JSON файлів завершено.")
+    print("Configuration file creation completed.")
 
 def read_json(file_path):
     try:
@@ -182,34 +159,32 @@ def main():
     user = 'NX-Family'
     repo = 'NX-Translation'
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    target_folder = os.path.join(current_dir, 'translations')
-    translations_path = target_folder
-    commit_user = 'rashevskyv'  # замініть на потрібного користувача
-    commit_repo = 'switch-translations-mirrors'  # замініть на потрібний репозиторій
+    translations_path = os.path.join(current_dir, 'translations')
+    commit_user = 'rashevskyv'
+    commit_repo = 'switch-translations-mirrors'
 
     release_date = get_latest_release_date(user, repo)
     commit_date = get_latest_commit_date(commit_user, commit_repo)
 
-    # download_file('https://raw.githubusercontent.com/NX-Family/NX-Translation/main/api.json', current_dir)
-    # api_data = read_json(os.path.join(current_dir, 'api.json'))
-    # create_config_from_json(api_data, os.path.join(current_dir, 'config_template.ini'), os.path.join(translations_path, 'config.ini'))
-    # create_language_jsons(api_data, current_dir)
-    # archive_and_move(translations_path, current_dir)
-
     if release_date and commit_date:
         if commit_date < release_date:
-            print(f"New release was detected on {release_date.strftime('%d.%m.%Y %H:%M:%S')}.")	
-
+            print("New version available. Updating...")
+            
+            # Clean up the translations folder
+            if os.path.exists(translations_path):
+                print(f"Cleaning up the translations folder: {translations_path}")
+                shutil.rmtree(translations_path)
+            os.makedirs(translations_path)
+            print(f"Created clean translations folder: {translations_path}")
+            
             download_file('https://raw.githubusercontent.com/NX-Family/NX-Translation/main/api.json', current_dir)
             api_data = read_json(os.path.join(current_dir, 'api.json'))
-            create_config_from_json(api_data, os.path.join(current_dir, 'config_template.ini'), os.path.join(translations_path, 'config.ini'))
-            create_language_jsons(api_data, current_dir)
+            create_config_from_json(api_data, os.path.join(current_dir, 'config_template.ini'), translations_path)
             archive_and_move(translations_path, current_dir)
-
         else:
-            print(f"No new releases detected")
+            print("Update not needed.")
     else:
-        print("Не вдалося отримати одну або обидві дати.")
+        print("Failed to get date information. Update skipped.")
 
 if __name__ == "__main__":
     main()
