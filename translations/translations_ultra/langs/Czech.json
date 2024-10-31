@@ -1,0 +1,10 @@
+[
+    {
+        "lang": "English for America region",
+        "dir": "replaces_en-US"
+    },
+    {
+        "lang": "English for Europe region",
+        "dir": "replaces_en-EU"
+    }
+]

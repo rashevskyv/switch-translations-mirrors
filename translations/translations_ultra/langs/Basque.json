@@ -1,0 +1,26 @@
+[
+    {
+        "lang": "English for America region",
+        "dir": "replaces_en-US"
+    },
+    {
+        "lang": "English for Europe region",
+        "dir": "replaces_en-EU"
+    },
+    {
+        "lang": "Spanish for America region",
+        "dir": "replaces_es-US"
+    },
+    {
+        "lang": "Spanish for Europe region",
+        "dir": "replaces_es-EU"
+    },
+    {
+        "lang": "French for America region",
+        "dir": "replaces_fr-US"
+    },
+    {
+        "lang": "French for Europe region",
+        "dir": "replaces_fr-EU"
+    }
+]
