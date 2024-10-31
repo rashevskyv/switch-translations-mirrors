@@ -95,6 +95,12 @@ def create_config_from_json(api_data, template_path, translations_path):
         file.write(config_content)
     print(f"General config.ini created: {general_config_path}")
 
+    # Creating general package.ini
+    general_config_path = os.path.join(translations_path, 'package.ini')
+    with open(general_config_path, 'w') as file:
+        file.write(config_content)
+    print(f"General package.ini created: {general_config_path}")
+
     lang_template = config_parts[1].strip()
 
     lang_decoding = {
@@ -139,6 +145,11 @@ def create_config_from_json(api_data, template_path, translations_path):
             file.write(lang_config)
         print(f"Config.ini for {lang['name']} created: {lang_config_path}")
 
+        lang_config_path = os.path.join(lang_folder, 'package.ini')
+        with open(lang_config_path, 'w') as file:
+            file.write(lang_config)
+        print(f"package.ini for {lang['name']} created: {lang_config_path}")
+
     print("Configuration file creation completed.")
 
 def read_json(file_path):
@@ -180,6 +191,7 @@ def main():
             download_file('https://raw.githubusercontent.com/NX-Family/NX-Translation/main/api.json', current_dir)
             api_data = read_json(os.path.join(current_dir, 'api.json'))
             create_config_from_json(api_data, os.path.join(current_dir, 'config_template.ini'), translations_path)
+            create_config_from_json(api_data, os.path.join(current_dir, 'package_template.ini'), translations_path)
             archive_and_move(translations_path, current_dir)
         else:
             print("Update not needed.")
